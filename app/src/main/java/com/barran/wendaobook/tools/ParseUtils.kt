@@ -3,8 +3,6 @@ package com.barran.wendaobook.tools
 import android.content.Context
 import android.widget.Toast
 import com.barran.wendaobook.model.Entry
-import com.barran.wendaobook.model.toJson
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -111,39 +109,4 @@ object ParseUtils {
         return list
     }
 
-    fun genConfig(context: Context): String {
-
-        val maps = mutableMapOf<Entry.HistoryEntry, List<Entry.VersionEntry>>()
-
-        val list = mutableListOf<Entry.VersionEntry>()
-
-        // region gen config data
-        list.add(Entry.VersionEntry("1.36", "2007-01-01", ""))
-        maps.put(Entry.HistoryEntry("2007", 2007), list)
-        list.clear()
-
-        // endregion
-
-        try {
-            val json = JSONObject()
-            val entries = JSONArray()
-
-            for (entry in maps) {
-                val entryJson = JSONObject()
-                entryJson.put("year", entry.key.dateYear)
-                var versions = JSONArray()
-                for (item: Entry.VersionEntry in entry.value) {
-                    versions.put(item.toJson())
-                }
-                entryJson.put("versions", versions)
-            }
-
-            json.put("entries", entries)
-
-            return json.toString()
-        } catch (e: JSONException) {
-            Toast.makeText(context, "gen config failed ${e.message}", Toast.LENGTH_SHORT).show()
-            return ""
-        }
-    }
 }
