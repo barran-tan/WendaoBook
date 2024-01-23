@@ -5,6 +5,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.barran.wendaobook.R
 
+/**
+ * detail activity
+ */
 class DetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

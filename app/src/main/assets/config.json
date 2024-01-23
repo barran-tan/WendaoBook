@@ -1,6 +1,16 @@
 {
   "entries": [
     {
+      "year": 2024,
+      "versions": [
+        {
+          "title": "1.764",
+          "date": "2024-01-14",
+          "file": "1.764.txt"
+        }
+      ]
+    },
+    {
       "year": 2023,
       "versions": [
         {

@@ -3,6 +3,7 @@ package com.barran.wendaobook.list
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +15,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.barran.wendaobook.R
 import com.barran.wendaobook.databinding.FragmentListBinding
 import com.barran.wendaobook.tools.ParseUtils
+import com.barran.wendaobook.tts.TTSHelper
 import com.drakeet.multitype.MultiTypeAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+/**
+ * content detail fragment
+ */
 open class UpdateContentListFragment : Fragment() {
 
     protected lateinit var binding: FragmentListBinding
@@ -78,6 +83,8 @@ open class UpdateContentListFragment : Fragment() {
                 adapter.notifyDataSetChanged()
                 dismissProcess()
             }
+
+            initTTS(list)
         }
     }
 
@@ -92,4 +99,58 @@ open class UpdateContentListFragment : Fragment() {
     fun dismissProcess(){
         dialog?.dismiss()
     }
+
+    // region tts
+
+    private var tts: TTSHelper? = null
+
+    private var speakIndex = 0
+
+    private val list = mutableListOf<String>()
+
+    private var id: String? = null
+
+    private var start = 0L
+
+    private fun initTTS(list: List<String>) {
+
+        val ctx = context ?: return
+
+        id = arguments?.getString("title")
+        this.list.addAll(list)
+
+        tts = TTSHelper(onInit = {
+            start = System.currentTimeMillis()
+            speak(this.list[speakIndex++])
+        }, onSpeakStart = {
+
+        }, onSpeakFinish = {
+            if (speakIndex < list.size) {
+                speak(this.list[speakIndex++])
+            } else {
+                Log.v(
+                    "UpdateContentListFragment",
+                    "tts play finished cost ${System.currentTimeMillis() - start}"
+                )
+            }
+        })
+
+        tts?.startTTS(ctx)
+    }
+
+    private fun speak(text: String) {
+        if (id == null) {
+            tts?.speak(text)
+        } else {
+            tts?.speak(text, requireNotNull(id))
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        
+        tts?.shutdown()
+    }
+
+    // endregion
 }

@@ -10,6 +10,9 @@ import com.barran.wendaobook.databinding.FragmentListBinding
 import com.barran.wendaobook.tools.ParseUtils
 import com.drakeet.multitype.MultiTypeAdapter
 
+/**
+ * entry fragment
+ */
 class EntryListFragment : Fragment() {
 
     private lateinit var binding: FragmentListBinding
