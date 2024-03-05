@@ -1,18 +1,12 @@
 package com.barran.wendaobook
 
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.barran.wendaobook.databinding.ActivityMainBinding
 import com.barran.wendaobook.list.EntryListFragment
 import com.barran.wendaobook.search.SearchActivity
-import java.io.ByteArrayInputStream
-import java.io.IOException
-import java.util.zip.ZipInputStream
 
 class MainActivity : AppCompatActivity() {
 
