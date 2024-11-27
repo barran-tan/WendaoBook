@@ -39,7 +39,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
-        supportActionBar?.title = "search"
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         initView()
@@ -47,8 +46,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (searchModel.showDetail.value != null) {
-            searchModel.showDetail.value = null
+        if (searchModel.isSearchMode.value == true) {
+            searchModel.setShowDetail(null)
         } else {
             super.onBackPressed()
         }
@@ -68,22 +67,34 @@ class SearchActivity : AppCompatActivity() {
 
     private fun initView() {
 
-        binding.btnSearch.setOnClickListener {
-            val string = binding.etInput.text.toString()
-            if (job?.isActive == true) {
-                showProcess()
-                searchKey = string
+        searchModel.isSearchMode.observe(this) {
+            if (it) {
+                binding.btnSearch.text = "下一个"
             } else {
-                searchModel.searchKey.postValue(string)
+                binding.btnSearch.text = "搜索"
             }
-            val imm = it.context.getSystemService(InputMethodManager::class.java)
-            imm?.hideSoftInputFromWindow(binding.etInput.windowToken, 0)
+        }
+
+        binding.btnSearch.setOnClickListener {
+            if (searchModel.isSearchMode.value == true) {
+                searchModel.showNext(searchModel.showDetail.value?.matchCount ?: 0)
+            } else {
+                val string = binding.etInput.text.toString()
+                if (job?.isActive == true) {
+                    showProcess()
+                    searchKey = string
+                } else {
+                    searchModel.searchKey.postValue(string)
+                }
+                val imm = it.context.getSystemService(InputMethodManager::class.java)
+                imm?.hideSoftInputFromWindow(binding.etInput.windowToken, 0)
+            }
         }
 
         binding.rvResultList.layoutManager = LinearLayoutManager(this)
         adapter = MultiTypeAdapter().apply {
             register(SearchEntryItem(){
-                searchModel.showDetail.value = it
+                searchModel.setShowDetail(it)
             })
         }
         binding.rvResultList.adapter = adapter
@@ -95,6 +106,9 @@ class SearchActivity : AppCompatActivity() {
         }
         searchModel.showDetail.observe(this) {
             if (it != null) {
+
+                supportActionBar?.title = "当前搜索版本 ${it.title}"
+
                 val args = Bundle()
                 args.putString("file", it.file)
                 supportFragmentManager.beginTransaction()
@@ -103,6 +117,9 @@ class SearchActivity : AppCompatActivity() {
 
                 binding.rvResultList.isVisible = false
             } else {
+
+                supportActionBar?.title = "搜索"
+
                 val frag = supportFragmentManager.findFragmentByTag("detail")
                 if (frag?.isAdded == true) {
                     supportFragmentManager.beginTransaction().remove(frag).commitAllowingStateLoss()
@@ -127,7 +144,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun handleSearchAction(key:String){
-        if(searchModel.showDetail.value == null) {
+        if(searchModel.isSearchMode.value == false) {
             lifecycleScope.launch(Dispatchers.IO) {
                 val list = search(key)
                 launch(Dispatchers.Main) {
@@ -144,9 +161,24 @@ class SearchActivity : AppCompatActivity() {
         val list = mutableListOf<SearchEntry>()
 
         for (entry in ParseUtils.contents) {
-            val count = entry.value.count { it.contains(key) }
+            val matchIndexList = mutableListOf<Int>()
+            entry.value.forEachIndexed { index, s ->
+                if (s.contains(key)) {
+                    matchIndexList.add(index)
+                }
+            }
+            val count = matchIndexList.size
             if (count > 0) {
-                list.add(SearchEntry(entry.key.title, entry.key.date, entry.key.file, key, count))
+                list.add(
+                    SearchEntry(
+                        entry.key.title,
+                        entry.key.date,
+                        entry.key.file,
+                        key,
+                        count,
+                        matchIndexList
+                    )
+                )
             }
         }
 

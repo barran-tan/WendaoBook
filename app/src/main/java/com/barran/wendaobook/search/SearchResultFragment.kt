@@ -17,6 +17,12 @@ class SearchResultFragment : UpdateContentListFragment() {
         searchModel.searchKey.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
         }
+
+        searchModel.searchContentIndex.observe(this.viewLifecycleOwner) {
+            if (it >= 0 && it < adapter.items.size) {
+                binding.rvContentList.smoothScrollToPosition(it)
+            }
+        }
     }
 
     override fun createAdapter(): MultiTypeAdapter {
