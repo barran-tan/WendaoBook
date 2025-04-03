@@ -27,7 +27,7 @@ class DetailActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.container, UpdateContentListFragment::class.java, args)
+            .add(R.id.container, DetailFragment::class.java, args)
             .commitAllowingStateLoss()
     }
 

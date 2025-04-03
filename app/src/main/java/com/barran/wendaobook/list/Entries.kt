@@ -81,7 +81,7 @@ class ContentItem(private val key: LiveData<String>? = null) : ItemViewDelegate<
 
     override fun onCreateViewHolder(context: Context, parent: ViewGroup): ContentHolder {
         val text = TextView(context).apply {
-            textSize = 12f
+            textSize = 14f
             setTextColor(context.getColor(R.color.gray_3))
             setPadding(0, 20, 0, 20)
         }
@@ -93,7 +93,7 @@ class ContentHolder(private val text: TextView) : RecyclerView.ViewHolder(text) 
     fun update(content: String, key: String? = null) {
 
         val span = SpannableString(content)
-        span.setSpan(RelativeSizeSpan(1.4f), 0, 3, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE)
+        span.setSpan(RelativeSizeSpan(1.6f), 0, 3, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE)
 
         if (key != null) {
             val start = content.indexOf(key, 0)

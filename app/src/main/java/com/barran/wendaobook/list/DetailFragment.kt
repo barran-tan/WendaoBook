@@ -23,7 +23,9 @@ import kotlinx.coroutines.launch
 /**
  * content detail fragment
  */
-open class UpdateContentListFragment : Fragment() {
+open class DetailFragment : Fragment() {
+
+    private val TAG = "DetailFragment"
 
     protected lateinit var binding: FragmentListBinding
 
@@ -128,10 +130,7 @@ open class UpdateContentListFragment : Fragment() {
             if (speakIndex < list.size) {
                 speak(this.list[speakIndex++])
             } else {
-                Log.v(
-                    "UpdateContentListFragment",
-                    "tts play finished cost ${System.currentTimeMillis() - start}"
-                )
+                Log.v(TAG, "tts play finished cost ${System.currentTimeMillis() - start}")
             }
         })
 

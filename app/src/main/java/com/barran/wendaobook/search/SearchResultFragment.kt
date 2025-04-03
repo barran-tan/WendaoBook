@@ -4,10 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.barran.wendaobook.list.ContentItem
-import com.barran.wendaobook.list.UpdateContentListFragment
+import com.barran.wendaobook.list.DetailFragment
 import com.drakeet.multitype.MultiTypeAdapter
 
-class SearchResultFragment : UpdateContentListFragment() {
+class SearchResultFragment : DetailFragment() {
 
     private val searchModel: SearchViewModel by activityViewModels()
 

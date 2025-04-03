@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        supportActionBar?.title = getString(R.string.app_name)
+        supportActionBar?.title = getString(R.string.title_main)
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         initView()
