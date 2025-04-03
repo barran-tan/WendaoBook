@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">WendaoBook</string>
+
+    <string name="title_main">问道更新日志</string>
+
+    <string name="title_national_server">国服普通版</string>
+    <string name="title_international_server">海外版</string>
+
+    <string name="tip_select_server_version">请选择一个服务器</string>
+    <string name="tip_select_version">请选择一个版本</string>
+
+    <string name="title_search">搜索</string>
+
+    <string name="txt_cur_version">当前搜索版本 %s</string>
+    <string name="txt_search_result">本次更新匹配%d条内容</string>
+    <string name="txt_next">下一个</string>
 </resources>

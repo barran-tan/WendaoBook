@@ -17,7 +17,7 @@ class DetailActivity : AppCompatActivity() {
 
         val args =
             if (intent.extras == null) {
-                Toast.makeText(this, "plz select a version", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.tip_select_version, Toast.LENGTH_SHORT).show()
                 finish()
                 return
             } else {

@@ -40,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.title = getString(R.string.title_search)
 
         initView()
         loadData()
@@ -69,9 +70,9 @@ class SearchActivity : AppCompatActivity() {
 
         searchModel.isSearchMode.observe(this) {
             if (it) {
-                binding.btnSearch.text = "下一个"
+                binding.btnSearch.text = getString(R.string.txt_next)
             } else {
-                binding.btnSearch.text = "搜索"
+                binding.btnSearch.text = getString(R.string.title_search)
             }
         }
 
@@ -107,7 +108,7 @@ class SearchActivity : AppCompatActivity() {
         searchModel.showDetail.observe(this) {
             if (it != null) {
 
-                supportActionBar?.title = "当前搜索版本 ${it.title}"
+                supportActionBar?.title = getString(R.string.txt_cur_version, it.title)
 
                 val args = Bundle()
                 args.putString("file", it.file)
@@ -118,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
                 binding.rvResultList.isVisible = false
             } else {
 
-                supportActionBar?.title = "搜索"
+                supportActionBar?.title = getString(R.string.title_search)
 
                 val frag = supportFragmentManager.findFragmentByTag("detail")
                 if (frag?.isAdded == true) {
@@ -132,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun loadData() {
         job = lifecycleScope.launch(Dispatchers.IO) {
-            ParseUtils.entries.filter { it is Entry.VersionEntry }.map { it as Entry.VersionEntry }
+            ParseUtils.curEntries.filter { it is Entry.VersionEntry }.map { it as Entry.VersionEntry }
                 .forEach {
                     ParseUtils.parseContent(this@SearchActivity, it.file)
                 }
@@ -160,7 +161,7 @@ class SearchActivity : AppCompatActivity() {
 
         val list = mutableListOf<SearchEntry>()
 
-        for (entry in ParseUtils.contents) {
+        for (entry in ParseUtils.curContents) {
             val matchIndexList = mutableListOf<Int>()
             entry.value.forEachIndexed { index, s ->
                 if (s.contains(key)) {

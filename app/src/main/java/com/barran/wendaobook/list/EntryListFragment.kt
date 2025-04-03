@@ -17,6 +17,16 @@ class EntryListFragment : Fragment() {
 
     private lateinit var binding: FragmentListBinding
 
+    private var versionType = ParseUtils.VERSION_NATIONAL
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val type = arguments?.getInt(ParseUtils.KEY_VERSION_TYPE, -1) ?: -1
+        if (type != -1) {
+            versionType = type
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,7 +41,7 @@ class EntryListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val list = ParseUtils.parseHistoryEntries(requireContext())
+        val list = ParseUtils.parseHistoryEntries(requireContext(), versionType)
         binding.rvContentList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvContentList.adapter = MultiTypeAdapter().apply {
             register(HistoryEntryItem())

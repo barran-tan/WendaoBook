@@ -13,21 +13,38 @@ import java.util.Locale
 
 object ParseUtils {
 
+    const val KEY_VERSION_TYPE = "version_type"
+
+    const val VERSION_NATIONAL = 0
+    const val VERSION_INTERNATIONAL = 1
+
     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
 
-    var entries: List<Entry> = emptyList()
-        private set
+    private val configJson = mapOf(
+        VERSION_NATIONAL to "config.json",
+        VERSION_INTERNATIONAL to "haiwai/config.json"
+    )
 
-    val contents = mutableMapOf<Entry.VersionEntry, List<String>>()
+    private val allEntryMap = mutableMapOf<Int, List<Entry>>()
+    private val allContentMap = mutableMapOf<Int, MutableMap<Entry.VersionEntry, List<String>>>()
 
-    fun parseHistoryEntries(context: Context): List<Entry> {
-        if (entries.isNotEmpty()) {
-            return entries
+    private var curVersionType = VERSION_NATIONAL
+
+    val curEntries: List<Entry>
+        get() = requireNotNull(allEntryMap[curVersionType])
+
+    val curContents: MutableMap<Entry.VersionEntry, List<String>>
+        get() = requireNotNull(allContentMap[curVersionType])
+
+    fun parseHistoryEntries(context: Context, versionType: Int = VERSION_NATIONAL): List<Entry> {
+        curVersionType = versionType
+        if (allEntryMap.contains(versionType)) {
+            return requireNotNull(allEntryMap[versionType])
         }
         val list = mutableListOf<Entry>()
 
         val config = try {
-            val inputStream = context.assets.open("config.json")
+            val inputStream = context.assets.open(requireNotNull(configJson[curVersionType]))
             val reader = BufferedReader(inputStream.reader())
             val temp = reader.readText()
             inputStream.close()
@@ -62,18 +79,24 @@ object ParseUtils {
             Toast.makeText(context, "parse config failed ${e.message}", Toast.LENGTH_SHORT).show()
         }
 
-        entries = list
+        allEntryMap[versionType] = list
         return list
     }
 
     fun parseContent(context: Context, file: String): List<String> {
         val entry =
-            requireNotNull(entries.find { it is Entry.VersionEntry && it.file == file }) as Entry.VersionEntry
+            requireNotNull(requireNotNull(allEntryMap[curVersionType]).find { it is Entry.VersionEntry && it.file == file }) as Entry.VersionEntry
         return parseContent(context, entry)
     }
 
     fun parseContent(context: Context, version: Entry.VersionEntry): List<String> {
-
+        val contents = if (allContentMap.contains(curVersionType)) {
+            requireNotNull(allContentMap[curVersionType])
+        } else {
+            val newMap = mutableMapOf<Entry.VersionEntry, List<String>>()
+            allContentMap[curVersionType] = newMap
+            newMap
+        }
         if (contents.contains(version)) {
             return requireNotNull(contents[version])
         }

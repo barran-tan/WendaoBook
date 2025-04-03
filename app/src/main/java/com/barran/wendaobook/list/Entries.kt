@@ -132,7 +132,10 @@ class SearchEntryHolder(private val bind: ItemSearchEntryBinding) :
     RecyclerView.ViewHolder(bind.root) {
     fun update(content: SearchEntry, action: (SearchEntry) -> Unit) {
         bind.tvTitle.text = content.title
-        bind.tvCount.text = "本次更新匹配${content.matchCount}条内容"
+        bind.tvCount.text = bind.tvCount.resources.getString(
+            R.string.txt_search_result,
+            content.matchCount
+        )
 
         bind.root.setOnClickListener {
             action.invoke(content)

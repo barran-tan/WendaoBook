@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.barran.wendaobook.databinding.ActivityMainBinding
-import com.barran.wendaobook.list.EntryListFragment
-import com.barran.wendaobook.search.SearchActivity
+import com.barran.wendaobook.list.EntryListActivity
+import com.barran.wendaobook.tools.ParseUtils
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,13 +25,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        binding.btnSearch.setImageResource(androidx.appcompat.R.drawable.abc_ic_search_api_material)
-        binding.btnSearch.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
+        binding.tvNational.setOnClickListener {
+            switchToNational()
         }
 
-        supportFragmentManager.beginTransaction()
-            .add(R.id.container, EntryListFragment::class.java, null)
-            .commitAllowingStateLoss()
+        binding.tvInternational.setOnClickListener {
+            switchToInternational()
+        }
+    }
+
+    private fun switchToNational() {
+        val intent = Intent(this, EntryListActivity::class.java)
+        intent.putExtra(ParseUtils.KEY_VERSION_TYPE, ParseUtils.VERSION_NATIONAL)
+        startActivity(intent)
+    }
+
+    private fun switchToInternational() {
+        val intent = Intent(this, EntryListActivity::class.java)
+        intent.putExtra(ParseUtils.KEY_VERSION_TYPE, ParseUtils.VERSION_INTERNATIONAL)
+        startActivity(intent)
     }
 }
